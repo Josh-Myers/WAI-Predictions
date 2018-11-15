@@ -1,5 +1,5 @@
 # WAI-Predictions
-Models and script for the WAI Predictions Shiny app (https://joshmyers.shinyapps.io/WAIPredictions/) that accompanies the Myers et al. (2018a and 2018b) articles.
+Models and script for the WAI Predictions Shiny app (https://joshmyers.shinyapps.io/WAIPredictions/) that accompanies the Myers et al. (2018a, 2018b) articles.
 
 ## References
 Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018a). Development of a diagnostic prediction model for conductive conditions in neonates using wideband acoustic immittance. Ear and Hearing, 39(6), 1116-1135.
