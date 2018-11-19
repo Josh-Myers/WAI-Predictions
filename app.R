@@ -156,7 +156,7 @@ ui <- fluidPage(
                Results for one, or both ears are shown depending if one or two ears were tested in the session."),
              p("The example files (underneath the 'choose file' button) can be downloaded and then uploaded 
                to show how the app works without needing a Titan device."),
-             p("A demonstration of using the Titan tab of the app is provided in the video below:"),
+             p("A demonstration of using the Titan tab of the app is provided in the video below."),
              HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/KfQRZJ8Xf3k" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'),
              br(),
              h4("Manually Entering Data"),
@@ -182,7 +182,7 @@ ui <- fluidPage(
              p("Once your data are at the appropriate frequency resolution, choose the age, the ear side, enter the results into the text 
                boxes, and press the 'Go' button. A graph of the absorbance against the 90% normal range for the selected age group is shown,
                and the probability of middle ear dysfunction is displayed above the graph.
-               The video below gives a demonstration of using the Manual tab"),
+               The video below gives a demonstration of using the Manual tab."),
              HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/dTTDc6FgRfY?rel=0&amp;start=2" frameborder="0" al>low="autoplay; encrypted-media" allowfullscreen></iframe'),           
              br(),
              p("Please email myers.josh@gmail.com if you have any queries."),
