@@ -126,7 +126,7 @@ ui <- fluidPage(
              h4("References"),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018a). 
                Development of a diagnostic prediction model for conductive conditions in neonates using wideband acoustic immittance. 
-               Ear and Hearing, Advance online publication."),
+               Ear and Hearing, 39(6), 1116-1135."),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018b). 
                Diagnosing middle ear pathology in 6- to 9-month-old infants using wideband absorbance: A risk prediction model. 
                Journal of Speech Language and Hearing Research, Advance online publication."),
@@ -185,8 +185,7 @@ ui <- fluidPage(
                The video below gives a demonstration of using the Manual tab"),
              HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/dTTDc6FgRfY?rel=0&amp;start=2" frameborder="0" al>low="autoplay; encrypted-media" allowfullscreen></iframe'),           
              br(),
-             p("If you have any questions or issues with the app please email myers.josh@gmail.com. Also, email if you would like to participate
-               in research validating, or developing models for other age groups."),
+             p("Please email myers.josh@gmail.com if you have any queries."),
              br()
              )
              ))
