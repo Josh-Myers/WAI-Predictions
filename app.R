@@ -91,7 +91,9 @@ ui <- fluidPage(
                  hr(),
                  h5("Example files"),
                  downloadButton("download1", label = "Newborn"),
-                 downloadButton("download2", label = "6 months")),
+                 downloadButton("download2", label = "6 months"),
+                 downloadButton("download3", label = "12 months A"),
+                 downloadButton("download4", label = "12 months B")),
                mainPanel(p(), plotOutput("plot.R"), p(), plotOutput("plot.L"), p())
              )),
     tabPanel("Manual", fluid = TRUE,
@@ -143,7 +145,7 @@ ui <- fluidPage(
                Diagnosing middle ear pathology in 6- to 9-month-old infants using wideband absorbance: A risk prediction model. 
                Journal of Speech Language and Hearing Research, 61(9), 2386-2404."),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019). 
-               Diagnosing Mild and Severe Middle Ear Dysfunction in 10- to 16-Month-Old Infants Using Wideband Absorbance: An Ordinal Prediction Model. 
+               Diagnosing mild and severe middle ear dysfunction in 10- to 16-month-old infants using wideband absorbance: An ordinal prediction model. 
                Manuscript submitted for publication."),
              br()
              ),
@@ -955,6 +957,24 @@ server <- function(input, output, session) {
     
     content <- function(file) {
       file.copy("sixmth.xml", file)
+    })
+  
+  output$download3 <- downloadHandler(
+    filename <- function() {
+      paste("twelveMild", "xml", sep=".")
+    },
+    
+    content <- function(file) {
+      file.copy("twelveMild.xml", file)
+    })
+  
+  output$download4 <- downloadHandler(
+    filename <- function() {
+      paste("twelveSevere", "xml", sep=".")
+    },
+    
+    content <- function(file) {
+      file.copy("twelveSevere.xml", file)
     })
   
   # Excel download file for averaging WAI into 1 and 1/2 octave frequency resolution
