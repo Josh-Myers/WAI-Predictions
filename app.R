@@ -91,8 +91,7 @@ ui <- fluidPage(
                  hr(),
                  h5("Example files"),
                  downloadButton("download1", label = "Newborn"),
-                 downloadButton("download2", label = "6 months"), 
-                 downloadButton("download3", label = "12 months")),
+                 downloadButton("download2", label = "6 months")),
                mainPanel(p(), plotOutput("plot.R"), p(), plotOutput("plot.L"), p())
              )),
     tabPanel("Manual", fluid = TRUE,
@@ -131,10 +130,10 @@ ui <- fluidPage(
              p("The model for 6-9 month old infants uses the entire range of absorbance frequencies averaged into half octave bandwidths. 
                 Principal component analysis transforms the absorbance variables into a new set of variables called
                  'principal components', which allows the number of variables to be greatly reduced with minimal information loss. 
-                The principal components are used as variables in the statistical model to calculate the probability of middle ear dysfunction.")
+                The principal components are used as variables in the statistical model to calculate the probability of middle ear dysfunction."),
              p("The 10-16 month model takes 1/2 octave absorbance from 1000 to 5657 Hz as predictors (i.e., 1000, 1414, 2000, 2828, 4000, and 5657 Hz).
                 This is an ordinal model, and calculates the probability that the ear has either 'normal', 'mild' or 'severe' middle ear dysfunction. 
-                The condition with the highest probability is presented as the provisional diagnosis. 
+                The most likely condtion along with the corresponding probability (P) is presented as the provisional diagnosis. 
                 See the articles below for detailed information about the models."), 
              h4("References"),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018a). 
@@ -474,7 +473,7 @@ server <- function(input, output, session) {
           paste(input$ear, "ear: Probability =", pred.manual)
         }
         else {
-          paste(input$ear, "provisional diagnosis:", pred.12.diagnosis, "(P =", pred.manual, ")")
+          paste(input$ear, "ear:", pred.12.diagnosis, "(P =", pred.manual, ")")
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -708,7 +707,7 @@ server <- function(input, output, session) {
           paste("Right", "ear: Probability =", pred)
         }
         else {
-          paste("Right ear provisional diagnosis:", pred.12.diagnosis.r, "(P =", pred, ")")
+          paste("Right ear:", pred.12.diagnosis.r, "(P =", pred, ")")
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -926,7 +925,7 @@ server <- function(input, output, session) {
           paste("Left", "ear: Probability =", pred)
         }
         else {
-          paste("Left ear provisional diagnosis:", pred.12.diagnosis.l, "(P =", pred, ")")
+          paste("Left ear:", pred.12.diagnosis.l, "(P =", pred, ")")
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -950,15 +949,6 @@ server <- function(input, output, session) {
     })
   
   output$download2 <- downloadHandler(
-    filename <- function() {
-      paste("sixmth", "xml", sep=".")
-    },
-    
-    content <- function(file) {
-      file.copy("sixmth.xml", file)
-    })
-  
-  output$download3 <- downloadHandler(
     filename <- function() {
       paste("sixmth", "xml", sep=".")
     },
