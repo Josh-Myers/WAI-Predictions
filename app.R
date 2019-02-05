@@ -90,8 +90,8 @@ ui <- fluidPage(
                  fileInput(inputId = "file1", label = "Choose file", accept = ".xml"),
                  hr(),
                  h5("Example files"),
-                 downloadButton("download1", label = "Newborn"),
-                 downloadButton("download2", label = "6 months"),
+                 downloadButton("download1", label = "Newborn _A"),
+                 downloadButton("download2", label = "6 months _A"),
                  downloadButton("download3", label = "12 months A"),
                  downloadButton("download4", label = "12 months B")),
                mainPanel(p(), plotOutput("plot.R"), p(), plotOutput("plot.L"), p())
