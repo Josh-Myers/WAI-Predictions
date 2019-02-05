@@ -426,6 +426,8 @@ server <- function(input, output, session) {
     else {
      pred.manual.12mth = round(predict(twelve.month.model, manual.data, type = "fitted.ind"), 2)
      pred.manual = max(pred.manual.12mth) 
+     twelvemth.pred.complex.mild = round(predict(twelve.month.model, manual.data, type = 'fitted'), 2)[1]
+     twelvemth.pred.complex.severe = round(predict(twelve.month.model, manual.data, type = 'fitted'), 2)[2]
     }
     
     #diagnosis = vector("character", length = 1)
@@ -475,7 +477,8 @@ server <- function(input, output, session) {
           paste(input$ear, "ear: Probability =", pred.manual)
         }
         else {
-          paste(input$ear, "ear:", pred.12.diagnosis, "(P =", pred.manual, ")")
+          paste(input$ear, ": Simplified = ", pred.12.diagnosis, 
+                "; Probabilistic >=Mild", twelvemth.pred.complex.mild, ", >=Severe", twelvemth.pred.complex.severe)
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -668,11 +671,16 @@ server <- function(input, output, session) {
                                                  abs5822.61 +	abs5993.23 +	abs6168.84 +	abs6349.60 +	abs6535.66 +	abs6727.17)/12) # 4756.84 - 6727.17
     preds.r = cbind.data.frame(abs1000.r, abs1414.r, abs2000.r, abs2828.r, abs4000.r, abs5657.r)
     names(preds.r) = c("abs1000", "abs1414", "abs2000", "abs2828", "abs4000", "abs5657")
+    # simplified interpretations
     twelvemth.pred.r = round(predict(twelve.month.model, preds.r, type = "fitted.ind"), 2)
     twelvemth.prob.r = max(twelvemth.pred.r)
     names(twelvemth.pred.r) = c("Normal", "Mild", "Severe")
     pred.12.diagnosis.r = c("Normal", "Mild", "Severe")[which.max(c(twelvemth.pred.r))]
-  
+    # probabilistic interpretation
+    twelvemth.pred.r.complex = round(predict(twelve.month.model, preds.r, type = 'fitted'), 2)
+    twelvemth.pred.r.complex.mild = twelvemth.pred.r.complex[1]
+    twelvemth.pred.r.complex.severe = twelvemth.pred.r.complex[2]
+    
     # choose the prediction (titan)
     pred <- switch(input$age, 
                    "Newborn" = newborn.pred.r,
@@ -709,7 +717,8 @@ server <- function(input, output, session) {
           paste("Right", "ear: Probability =", pred)
         }
         else {
-          paste("Right ear:", pred.12.diagnosis.r, "(P =", pred, ")")
+          paste("Right: Simplified = ", pred.12.diagnosis.r, 
+                "; Probabilistic >=Mild", twelvemth.pred.r.complex.mild, ", >=Severe", twelvemth.pred.r.complex.severe)
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -719,7 +728,7 @@ server <- function(input, output, session) {
       #coord_fixed() +
       theme(plot.title = element_text(size=16),
             axis.text=element_text(size=12),
-            axis.title=element_text(size=15))
+            axis.title=element_text(size=15)) 
   })
   
   # Titan left munge, predict, plot
@@ -886,11 +895,15 @@ server <- function(input, output, session) {
                                                  abs5822.61 +	abs5993.23 +	abs6168.84 +	abs6349.60 +	abs6535.66 +	abs6727.17)/12) # 4756.84 - 6727.17
     preds.l = cbind.data.frame(abs1000.l, abs1414.l, abs2000.l, abs2828.l, abs4000.l, abs5657.l)
     names(preds.l) = c("abs1000", "abs1414", "abs2000", "abs2828", "abs4000", "abs5657")
+    # simplified interpretation prediction
     twelvemth.pred.l = round(predict(twelve.month.model, preds.l, type = "fitted.ind"), 2)
     twelvemth.prob.l = max(twelvemth.pred.l)
     names(twelvemth.pred.l) = c("Normal", "Mild", "Severe")
     pred.12.diagnosis.l = c("Normal", "Mild", "Severe")[which.max(c(twelvemth.pred.l))]
-    
+    # probabilistic interpretation
+    twelvemth.pred.l.complex = round(predict(twelve.month.model, preds.l, type = 'fitted'), 2)
+    twelvemth.pred.l.complex.mild = twelvemth.pred.l.complex[1]
+    twelvemth.pred.l.complex.severe = twelvemth.pred.l.complex[2]
     
     # choose the prediction (titan)
     pred <- switch(input$age, 
@@ -927,7 +940,8 @@ server <- function(input, output, session) {
           paste("Left", "ear: Probability =", pred)
         }
         else {
-          paste("Left ear:", pred.12.diagnosis.l, "(P =", pred, ")")
+          paste("Left: Simplified = ", pred.12.diagnosis.l, 
+                "; Probabilistic >=Mild", twelvemth.pred.l.complex.mild, ", >=Severe", twelvemth.pred.l.complex.severe)
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -937,8 +951,8 @@ server <- function(input, output, session) {
       #coord_fixed() +
       theme(plot.title = element_text(size=16),
             axis.text=element_text(size=12),
-            axis.title=element_text(size=15))
-  })
+            axis.title=element_text(size=15)) 
+      })
   
   # Titan download files
   output$download1 <- downloadHandler(
