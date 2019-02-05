@@ -134,8 +134,8 @@ ui <- fluidPage(
                  'principal components', which allows the number of variables to be greatly reduced with minimal information loss. 
                 The principal components are used as variables in the statistical model to calculate the probability of middle ear dysfunction."),
              p("The 10-16 month model takes 1/2 octave absorbance from 1000 to 5657 Hz as predictors (i.e., 1000, 1414, 2000, 2828, 4000, and 5657 Hz).
-                This is an ordinal model, and calculates the probability that the ear has either 'normal', 'mild' or 'severe' middle ear dysfunction. 
-                The most likely condtion along with the corresponding probability (P) is presented as the provisional diagnosis. 
+                This is an ordinal model, and calculates the probability that the ear has either 'mild' or 'severe' middle ear dysfunction. 
+                A simplified interpretation is also presented which is the most likely diagnosis (normal, mild or severe).
                 See the articles below for detailed information about the models."), 
              h4("References"),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018a). 
@@ -145,7 +145,7 @@ ui <- fluidPage(
                Diagnosing middle ear pathology in 6- to 9-month-old infants using wideband absorbance: A risk prediction model. 
                Journal of Speech Language and Hearing Research, 61(9), 2386-2404."),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019). 
-               Diagnosing mild and severe middle ear dysfunction in 10- to 16-month-old infants using wideband absorbance: An ordinal prediction model. 
+               Diagnosing middle ear dysfunction in 10- to 16-month-old infants using wideband absorbance: An ordinal prediction model. 
                Manuscript submitted for publication."),
              br()
              ),
