@@ -18,6 +18,7 @@ neonate.model = f.final
 load("sixMonthModel.rda")
 six.month.model = f.pca.penal
 twelve.month.model = readRDS("twelveMthModel.rds")
+infant.model = readRDS('InfantModel.rds')
 
 # load freq bandwidths tables
 load("oct.1.band.rda")
@@ -79,6 +80,13 @@ twelvemth.90.range = readRDS("twelveMth90range.rds")
 twelvemth.90.range = select(twelvemth.90.range, -c(rs, median))
 names(twelvemth.90.range) = c("Frequency", "Five", "Ninetyfive")
 
+SixTo18mth.90.range = readRDS('SixTo18Mth90range.rds')
+SixTo18mth.90.range = select(SixTo18mth.90.range, -c(rs, median))
+names(SixTo18mth.90.range) = c('Frequency', 'Five', 'Ninetyfive')
+SixTo18mth.90.range.2 = readRDS('SixTo18Mth90range2.rds')
+SixTo18mth.90.range.2 = select(SixTo18mth.90.range.2, -c(rs, median))
+names(SixTo18mth.90.range.2) = c('Frequency', 'Five', 'Ninetyfive')
+
 # UI ----
 ui <- fluidPage(
   headerPanel("WAI Predictions"),
@@ -86,7 +94,7 @@ ui <- fluidPage(
     tabPanel("Titan", fluid = TRUE,
              sidebarLayout(
                sidebarPanel(
-                 selectInput(inputId = "age", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months")),
+                 selectInput(inputId = "age", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months", '5-23 months')),
                  fileInput(inputId = "file1", label = "Choose file", accept = ".xml"),
                  hr(),
                  h5("Example files"),
@@ -98,7 +106,7 @@ ui <- fluidPage(
              )),
     tabPanel("Manual", fluid = TRUE,
              sidebarLayout(
-               sidebarPanel(selectInput(inputId = "age2", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months")), 
+               sidebarPanel(selectInput(inputId = "age2", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months", "5-23 months")), 
                             selectInput(inputId = "ear", label = "Ear", choices = c("Right", "Left")),  uiOutput("variables")),
                # issue was having things below the dynamic part - need to put the download somewhere else
                mainPanel(p(), plotOutput("plot.manual"), p(),  
@@ -110,7 +118,7 @@ ui <- fluidPage(
     tabPanel("About", fluid = TRUE,
              h4("About the App"),
              p("This web app implements the wideband acoustic immittance (WAI) statistical models for diagnosing middle ear pathology developed by 
-               Myers et al. (2018a; 2018b; 2019).
+               Myers et al. (2018a, 2018b, 2019a, 2019b).
                The models convert a multivariate ambient WAI measurement (226 to 8000 Hz) into a single interpretable value, in the form of a probability 
                between 0 and 1. 
                If probability is 0, there is no chance of middle ear pathology, and if 1, pathology is certain.
@@ -137,6 +145,9 @@ ui <- fluidPage(
                 This is an ordinal model, and calculates the probability that the ear has either 'mild' or 'severe' middle ear dysfunction. 
                 A simplified interpretation is also presented which is the most likely diagnosis (normal, mild or severe).
                 See the articles below for detailed information about the models."), 
+             p("The 5-23 month model takes 1/2 octave absorbance at 1000, 1414, 2000 and 5657 Hz as predictors, and
+                is an ordinal model that calculates the probability that the ear has either 'mild' or 'severe' middle ear dysfunction. 
+                See the articles below for detailed information about the models."), 
              h4("References"),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018a). 
                Development of a diagnostic prediction model for conductive conditions in neonates using wideband acoustic immittance. 
@@ -144,8 +155,11 @@ ui <- fluidPage(
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018b). 
                Diagnosing middle ear pathology in 6- to 9-month-old infants using wideband absorbance: A risk prediction model. 
                Journal of Speech Language and Hearing Research, 61(9), 2386-2404."),
-             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019). 
+             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019a). 
                Diagnosing middle ear dysfunction in 10- to 16-month-old infants using wideband absorbance: An ordinal prediction model. 
+               Manuscript submitted for publication."),
+             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019b). 
+               Diagnosing Conductive Dysfunction in Infants Using Wideband Acoustic Immittance: Validation and Development of Predictive Models. 
                Manuscript submitted for publication."),
              br()
              ),
@@ -153,17 +167,17 @@ ui <- fluidPage(
              br(),
              p("The app uses ambient wideband acoustic immittance (WAI) measurements to calculate the probability of middle ear dysfunction for an infant. 
                You can either upload a file saved from an Interacoustics Titan device, or enter results manually. 
-               Currently, the app only has models for newborns,  6-9 month, and 10-16 month old infants.
+               Currently, the app only has models for newborns,  6-9 month, 10-16 month old infants, and 5-23 months.
                The models for the various age groups use WAI results differently to make predictions. 
                The newborn model takes absorbance, admittance magnitude, and admittance phase angle results 
                averaged into octave bandwidths as predictors. 
-               The models for the 6-9 month, and 10-16 month infants, however, use absorbance only, averaged into half octave frequency bands."),
+               The models for the 6-9 month, 10-16 month, and 5-23 month infants, however, use absorbance only, averaged into half octave frequency bands."),
              
              h4("Using the App With a Titan Device"),
              p("The 'Titan' tab allows you to upload WAI results using a file created from a session with an Interacoustics Titan device.
                The file saves WAI measurements at 1/24 octave frequency resolution. Once uploaded,
                the app extracts the ambient WAI results and averages them into octave, and half octave bandwidths to be used as model variables in the 
-               newborn, 6-9 month, or 10-16 month infant models, respectively."),
+               newborn, 6-9 month, 10-16 month, 5-23 month infant models, respectively."),
              p("To use the app, first save a session from the Titan Suite as an xml file on your computer (Menu > Edit > Export). 
                Then, go to the app, select the 'Titan' tab, select the appropriate age group with the 'Select age' button, 
                and upload your file using the 'Choose file' button."),
@@ -201,7 +215,7 @@ ui <- fluidPage(
                The video below gives a demonstration of using the Manual tab."),
              HTML('<iframe width="560" height="315" src="https://www.youtube.com/embed/dTTDc6FgRfY?rel=0&amp;start=2" frameborder="0" al>low="autoplay; encrypted-media" allowfullscreen></iframe'),           
              br(),
-             p("Please email myers.josh@gmail.com if you have any queries."),
+             p("Please email myers.josh@gmail.com if you have any issues or queries."),
              br()
              )
              ))
@@ -250,8 +264,19 @@ server <- function(input, output, session) {
                                  numericInput("a4000", "Absorbance 4000 Hz", value = NULL, min = 0, max = 1), 
                                  numericInput("a5657", "Absorbance 5657 Hz", value = NULL, min = 0, max = 1),
                                  numericInput("a8000", "Absorbance 8000 Hz", value = NULL, min = 0, max = 1),
-                                 actionButton("do", "Go")
-           )
+                                 actionButton("do", "Go")),
+           "5-23 months" = list(numericInput("ab250", "Absorbance 250 Hz", value = NULL, min = 0, max = 1), 
+                                 numericInput("ab354", "Absorbance 354 Hz", value = NULL, min = 0, max = 1),
+                                 numericInput("ab500", "Absorbance 500 Hz", value = NULL, min = 0, max = 1), 
+                                 numericInput("ab707", "Absorbance 707 Hz", value = NULL, min = 0, max = 1),
+                                 numericInput("ab1000", "Absorbance 1000 Hz", value = NULL, min = 0, max = 1), 
+                                 numericInput("ab1414", "Absorbance 1414 Hz", value = NULL, min = 0, max = 1),
+                                 numericInput("ab2000", "Absorbance 2000 Hz", value = NULL, min = 0, max = 1), 
+                                 numericInput("ab2828", "Absorbance 2828 Hz", value = NULL, min = 0, max = 1),
+                                 numericInput("ab4000", "Absorbance 4000 Hz", value = NULL, min = 0, max = 1), 
+                                 numericInput("ab5657", "Absorbance 5657 Hz", value = NULL, min = 0, max = 1),
+                                 numericInput("ab8000", "Absorbance 8000 Hz", value = NULL, min = 0, max = 1),
+                                 actionButton("do", "Go"))
     ) 
   })
   # Listen for newborn variables for manual data entry
@@ -376,12 +401,54 @@ server <- function(input, output, session) {
     twelvemth.df
   })
 
+# Listen for 5-23mth variables for manual data entry
+  abs250 = eventReactive(input$do, {    
+    input$ab250
+  })
+  abs354 = eventReactive(input$do, {    
+    input$ab354
+  })
+  abs500 = eventReactive(input$do, {    
+    input$ab500
+  })
+  abs707 = eventReactive(input$do, {    
+    input$ab707
+  })
+  abs1000 = eventReactive(input$do, {    
+    input$ab1000
+  })
+  abs1414 = eventReactive(input$do, {    
+    input$ab1414
+  })
+  abs2000 = eventReactive(input$do, {    
+    input$ab2000
+  })
+  abs2828 = eventReactive(input$do, {    
+    input$ab2828
+  })
+  abs4000 = eventReactive(input$do, {    
+    input$ab4000
+  })
+  abs5657 = eventReactive(input$do, {    
+    input$ab5657
+  })
+  abs8000 = eventReactive(input$do, {    
+    input$ab8000
+  })
+  # make 5-23mth df (manual)
+  infant.vars = reactive({
+    infant.df = data.frame(abs250(), abs354(), abs500(), abs707(), abs1000(), abs1414(), abs2000(), abs2828(), abs4000(), abs5657(), abs8000())
+    names(infant.df) = c("abs250", "abs354", "abs500", "abs707", "abs1000", "abs1414", "abs2000", "abs2828", "abs4000", "abs5657", "abs8000")
+    infant.df
+  })
+  
   # select the right df for manual 
   manual.data = reactive({
     switch(input$age2, 
            "Newborn" = newborn.vars(),
            "6-9 months" = sixmth.vars(),
-           "10-16 months" = twelvemth.vars()
+           "10-16 months" = twelvemth.vars(),
+           "5-23 months" = infant.vars()
     )
   })
   # select either 1 or 1/2 octave frequencies for manual
@@ -389,7 +456,8 @@ server <- function(input, output, session) {
     switch(input$age2, 
            "Newborn" = one.freq,
            "6-9 months" = two.freq,
-           "10-16 months" = two.freq)
+           "10-16 months" = two.freq,
+           "5-23 months" = two.freq)
   })
   
   # clear the data when user changes selection (manual)
@@ -423,11 +491,15 @@ server <- function(input, output, session) {
       pred.manual = predict(six.month.model, pred.manual.pca, type = "fitted")
       pred.manual = round(pred.manual, digits = 2)
     }
-    else {
+    else if (input$age2 == '10-16 months') {
      pred.manual.12mth = round(predict(twelve.month.model, manual.data, type = "fitted.ind"), 2)
      pred.manual = max(pred.manual.12mth) 
      twelvemth.pred.complex.mild = round(predict(twelve.month.model, manual.data, type = 'fitted'), 2)[1]
      twelvemth.pred.complex.severe = round(predict(twelve.month.model, manual.data, type = 'fitted'), 2)[2]
+    }
+    else {
+      infant.pred.mild = round(predict(infant.model, manual.data, type = 'fitted'), 2)[1]
+      infant.pred.severe = round(predict(infant.model, manual.data, type = 'fitted'), 2)[2]
     }
     
     #diagnosis = vector("character", length = 1)
@@ -440,7 +512,8 @@ server <- function(input, output, session) {
     plot.data = switch(input$age2, 
                        "Newborn" = manual.data[,1:6],
                        "6-9 months" = manual.data,
-                       "10-16 months" = manual.data)
+                       "10-16 months" = manual.data, 
+                       '5-23 months' = manual.data)
     plot.data =  gather(plot.data, absorbance)
     #str(plot.data)
     req(manual.freqs)
@@ -459,7 +532,8 @@ server <- function(input, output, session) {
     range2 = switch(input$age2, 
                     "Newborn" = neonate.90.range.octave,
                     "6-9 months" = sixmth.90.range.half.octave,
-                    "10-16 months" = twelvemth.90.range.2)
+                    "10-16 months" = twelvemth.90.range.2, 
+                    '5-23 months' = SixTo18mth.90.range.2)
     
     ggplot(plot.data) +
       scale_x_log10(expand=c(0, 0), breaks=c(250, 500, 1000, 2000, 4000, 8000))  +
@@ -476,9 +550,12 @@ server <- function(input, output, session) {
         if (input$age2 == "Newborn" | input$age2 == "6-9 months") {
           paste(input$ear, "ear: Probability =", pred.manual)
         }
-        else {
+        else if (input$age2 == '10-16 months') {
           paste(input$ear, ": Simplified = ", pred.12.diagnosis, 
-                "; Probabilistic >=Mild", twelvemth.pred.complex.mild, ", >=Severe", twelvemth.pred.complex.severe)
+                "; Probabilistic >=Mild ", twelvemth.pred.complex.mild, ", >=Severe ", twelvemth.pred.complex.severe)
+        }
+        else {
+          paste(">=Mild ", infant.pred.mild, ", >=Severe ", infant.pred.severe)
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -681,17 +758,38 @@ server <- function(input, output, session) {
     twelvemth.pred.r.complex.mild = twelvemth.pred.r.complex[1]
     twelvemth.pred.r.complex.severe = twelvemth.pred.r.complex[2]
     
+    # 5-18 mths (titan)
+    req(right.data)
+    abs.r = right.data[1,]
+    names(abs.r) = abs.freqs
+    abs1000.r <- transmute(abs.r, abs1000.r = (abs865.54 +	abs890.90 +	abs917.00 +	abs943.87 +	abs971.53 +	abs1000.00 +	abs1029.30 +	
+                                                 abs1059.46 +	abs1090.51 +	abs1122.46 +	abs1155.35 +	abs1189.21)/12) # 840.91 - 1189.21
+    abs1414.r <- transmute(abs.r, abs1414.r = (abs1224.05 +	abs1259.92 +	abs1296.84 +	abs1334.84 +	abs1373.95 +	abs1414.21 +
+                                                 abs1455.65 +	abs1498.31 +	abs1542.21 +	abs1587.40 +	abs1633.92 +	abs1681.79)/12) # 1189.22 - 1681.79
+    abs2000.r <- transmute(abs.r, abs2000.r = (abs1731.07 +	abs1781.80 +	abs1834.01 +	abs1887.75 +	abs1943.06 +	abs2000.00 +
+                                                 abs2058.60 +	abs2118.93 +	abs2181.02 +	abs2244.92 +	abs2310.71 +	abs2378.41)/12) # 1681.80 - 2378.41
+    abs5657.r <- transmute(abs.r, abs5657.r = (abs4896.21 +	abs5039.68 +	abs5187.36 +	abs5339.36 +	abs5495.81 +	abs5656.85 +
+                                                 abs5822.61 +	abs5993.23 +	abs6168.84 +	abs6349.60 +	abs6535.66 +	abs6727.17)/12) # 4756.84 - 6727.17
+    preds.r = cbind.data.frame(abs1000.r, abs1414.r, abs2000.r, abs2828.r, abs4000.r, abs5657.r)
+    names(preds.r) = c("abs1000", "abs1414", "abs2000", "abs5657")
+    # probabilistic interpretation
+    infant.pred.r = round(predict(infant.model, preds.r, type = 'fitted'), 2)
+    infant.pred.r.mild = infant.pred.r[1]
+    infant.pred.r.severe = infant.pred.r[2]
+
     # choose the prediction (titan)
     pred <- switch(input$age, 
                    "Newborn" = newborn.pred.r,
                    "6-9 months" = sixmth.pred.r, 
-                   "10-16 months" = twelvemth.prob.r)
+                   "10-16 months" = twelvemth.prob.r,
+                   '5-23 months' = infant.pred.r)
     
     # and the correct 90% range (titan)
     range <- switch(input$age, 
                     "Newborn" = newborn.90.range,
                     "6-9 months" = sixmth.90.range, 
-                    "10-16 months" = twelvemth.90.range) 
+                    "10-16 months" = twelvemth.90.range,
+                    '5-23 months' = SixTo18mth.90.range) 
     
     # get data for plotting (titan)
     req(right.data)
@@ -716,9 +814,12 @@ server <- function(input, output, session) {
         if (input$age == "Newborn" | input$age == "6-9 months") {
           paste("Right", "ear: Probability =", pred)
         }
-        else {
+        else if (input$age == '10-16 months') {
           paste("Right: Simplified = ", pred.12.diagnosis.r, 
-                "; Probabilistic >=Mild", twelvemth.pred.r.complex.mild, ", >=Severe", twelvemth.pred.r.complex.severe)
+                "; Probabilistic >=Mild ", twelvemth.pred.r.complex.mild, ", >=Severe ", twelvemth.pred.r.complex.severe)
+        }
+        else {
+          paste(">=Mild ", infant.pred.r.mild, ", >=Severe ", infant.pred.r.severe)
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
@@ -905,17 +1006,39 @@ server <- function(input, output, session) {
     twelvemth.pred.l.complex.mild = twelvemth.pred.l.complex[1]
     twelvemth.pred.l.complex.severe = twelvemth.pred.l.complex[2]
     
+    # 5-23 mths (titan)
+    req(left.data)
+    abs.l = left.data[1,]
+    names(abs.l) = abs.freqs
+    abs1000.l <- transmute(abs.l, abs1000.l = (abs865.54 +	abs890.90 +	abs917.00 +	abs943.87 +	abs971.53 +	abs1000.00 +	abs1029.30 +	
+                                                 abs1059.46 +	abs1090.51 +	abs1122.46 +	abs1155.35 +	abs1189.21)/12) # 840.91 - 1189.21
+    abs1414.l <- transmute(abs.l, abs1414.l = (abs1224.05 +	abs1259.92 +	abs1296.84 +	abs1334.84 +	abs1373.95 +	abs1414.21 +
+                                                 abs1455.65 +	abs1498.31 +	abs1542.21 +	abs1587.40 +	abs1633.92 +	abs1681.79)/12) # 1189.22 - 1681.79
+    abs2000.l <- transmute(abs.l, abs2000.l = (abs1731.07 +	abs1781.80 +	abs1834.01 +	abs1887.75 +	abs1943.06 +	abs2000.00 +
+                                                 abs2058.60 +	abs2118.93 +	abs2181.02 +	abs2244.92 +	abs2310.71 +	abs2378.41)/12) # 1681.80 - 2378.41
+    abs5657.l <- transmute(abs.l, abs5657.l = (abs4896.21 +	abs5039.68 +	abs5187.36 +	abs5339.36 +	abs5495.81 +	abs5656.85 +
+                                                 abs5822.61 +	abs5993.23 +	abs6168.84 +	abs6349.60 +	abs6535.66 +	abs6727.17)/12) # 4756.84 - 6727.17
+    preds.l = cbind.data.frame(abs1000.l, abs1414.l, abs2000.l, abs5657.l)
+    names(preds.l) = c("abs1000", "abs1414", "abs2000", "abs5657")
+    # simplified interpretation prediction
+    # probabilistic interpretation
+    infant.pred.l = round(predict(infant.model, preds.l, type = 'fitted'), 2)
+    infant.pred.l.mild = twelvemth.pred.l.complex[1]
+    infant.pred.l.severe = twelvemth.pred.l.complex[2]
+    
     # choose the prediction (titan)
     pred <- switch(input$age, 
                    "Newborn" = newborn.pred.l,
                    "6-9 months" = sixmth.pred.l,
-                   "10-16 months" = twelvemth.prob.l)
+                   "10-16 months" = twelvemth.prob.l,
+                   '5-23 months' = infant.pred.l)
     
     # and the correct 90% range (titan)
     range <- switch(input$age, 
                     "Newborn" = newborn.90.range,
                     "6-9 months" = sixmth.90.range, 
-                    "10-16 months" = twelvemth.90.range) 
+                    "10-16 months" = twelvemth.90.range,
+                    '5-23 months' = SixTo18mth.90.range) 
     
     # get data for plotting (titan)
     data.l <- left.data[1,]
@@ -939,9 +1062,12 @@ server <- function(input, output, session) {
         if (input$age == "Newborn" | input$age == "6-9 months") {
           paste("Left", "ear: Probability =", pred)
         }
-        else {
+        else if (input$age == '10-16 months') {
           paste("Left: Simplified = ", pred.12.diagnosis.l, 
-                "; Probabilistic >=Mild", twelvemth.pred.l.complex.mild, ", >=Severe", twelvemth.pred.l.complex.severe)
+                "; Probabilistic >=Mild ", twelvemth.pred.l.complex.mild, ", >=Severe ", twelvemth.pred.l.complex.severe)
+        }
+        else {
+          paste(">=Mild ", infant.pred.l.mild, ", >=Severe ", infant.pred.l.severe)
         }) +
       theme(plot.title = element_text(hjust = 0.5)) +
       theme(plot.title = element_text(lineheight=.8, face="bold")) +
