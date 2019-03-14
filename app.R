@@ -94,7 +94,7 @@ ui <- fluidPage(
     tabPanel("Titan", fluid = TRUE,
              sidebarLayout(
                sidebarPanel(
-                 selectInput(inputId = "age", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months", '5-23 months')),
+                 selectInput(inputId = "age", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months", '6-23 months')),
                  fileInput(inputId = "file1", label = "Choose file", accept = ".xml"),
                  hr(),
                  h5("Example files"),
@@ -106,7 +106,7 @@ ui <- fluidPage(
              )),
     tabPanel("Manual", fluid = TRUE,
              sidebarLayout(
-               sidebarPanel(selectInput(inputId = "age2", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months", "5-23 months")), 
+               sidebarPanel(selectInput(inputId = "age2", label = "Select age", choices = c("Newborn", "6-9 months", "10-16 months", "6-23 months")), 
                             selectInput(inputId = "ear", label = "Ear", choices = c("Right", "Left")),  uiOutput("variables")),
                # issue was having things below the dynamic part - need to put the download somewhere else
                mainPanel(p(), plotOutput("plot.manual"), p(),  
@@ -145,7 +145,7 @@ ui <- fluidPage(
                 This is an ordinal model, and calculates the probability that the ear has either 'mild' or 'severe' middle ear dysfunction. 
                 A simplified interpretation is also presented which is the most likely diagnosis (normal, mild or severe).
                 See the articles below for detailed information about the models."), 
-             p("The 5-23 month model takes 1/2 octave absorbance at 1000, 1414, 2000 and 5657 Hz as predictors, and
+             p("The 6-23 month model takes 1/2 octave absorbance at 1000, 1414, 2000 and 5657 Hz as predictors, and
                 is an ordinal model that calculates the probability that the ear has either 'mild' or 'severe' middle ear dysfunction. 
                 See the articles below for detailed information about the models."), 
              h4("References"),
@@ -159,7 +159,7 @@ ui <- fluidPage(
                Diagnosing middle ear dysfunction in 10- to 16-month-old infants using wideband absorbance: An ordinal prediction model. 
                Manuscript submitted for publication."),
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019b). 
-               Diagnosing Conductive Dysfunction in Infants Using Wideband Acoustic Immittance: Validation and Development of Predictive Models. 
+               Diagnosing conductive dysfunction in infants using wideband acoustic immittance: Validation and development of predictive models. 
                Manuscript submitted for publication."),
              br()
              ),
@@ -167,17 +167,17 @@ ui <- fluidPage(
              br(),
              p("The app uses ambient wideband acoustic immittance (WAI) measurements to calculate the probability of middle ear dysfunction for an infant. 
                You can either upload a file saved from an Interacoustics Titan device, or enter results manually. 
-               Currently, the app only has models for newborns,  6-9 month, 10-16 month old infants, and 5-23 months.
+               Currently, the app only has models for newborns,  6-9 month, 10-16 month old infants, and 6-23 months.
                The models for the various age groups use WAI results differently to make predictions. 
                The newborn model takes absorbance, admittance magnitude, and admittance phase angle results 
                averaged into octave bandwidths as predictors. 
-               The models for the 6-9 month, 10-16 month, and 5-23 month infants, however, use absorbance only, averaged into half octave frequency bands."),
+               The models for the 6-9 month, 10-16 month, and 6-23 month infants, however, use absorbance only, averaged into half octave frequency bands."),
              
              h4("Using the App With a Titan Device"),
              p("The 'Titan' tab allows you to upload WAI results using a file created from a session with an Interacoustics Titan device.
                The file saves WAI measurements at 1/24 octave frequency resolution. Once uploaded,
                the app extracts the ambient WAI results and averages them into octave, and half octave bandwidths to be used as model variables in the 
-               newborn, 6-9 month, 10-16 month, 5-23 month infant models, respectively."),
+               newborn, 6-9 month, 10-16 month, 6-23 month infant models, respectively."),
              p("To use the app, first save a session from the Titan Suite as an xml file on your computer (Menu > Edit > Export). 
                Then, go to the app, select the 'Titan' tab, select the appropriate age group with the 'Select age' button, 
                and upload your file using the 'Choose file' button."),
@@ -265,7 +265,7 @@ server <- function(input, output, session) {
                                  numericInput("a5657", "Absorbance 5657 Hz", value = NULL, min = 0, max = 1),
                                  numericInput("a8000", "Absorbance 8000 Hz", value = NULL, min = 0, max = 1),
                                  actionButton("do", "Go")),
-           "5-23 months" = list(numericInput("ab250", "Absorbance 250 Hz", value = NULL, min = 0, max = 1), 
+           "6-23 months" = list(numericInput("ab250", "Absorbance 250 Hz", value = NULL, min = 0, max = 1), 
                                  numericInput("ab354", "Absorbance 354 Hz", value = NULL, min = 0, max = 1),
                                  numericInput("ab500", "Absorbance 500 Hz", value = NULL, min = 0, max = 1), 
                                  numericInput("ab707", "Absorbance 707 Hz", value = NULL, min = 0, max = 1),
@@ -401,7 +401,7 @@ server <- function(input, output, session) {
     twelvemth.df
   })
 
-# Listen for 5-23mth variables for manual data entry
+# Listen for 6-23mth variables for manual data entry
   abs250 = eventReactive(input$do, {    
     input$ab250
   })
@@ -435,7 +435,7 @@ server <- function(input, output, session) {
   abs8000 = eventReactive(input$do, {    
     input$ab8000
   })
-  # make 5-23mth df (manual)
+  # make 6-23mth df (manual)
   infant.vars = reactive({
     infant.df = data.frame(abs250(), abs354(), abs500(), abs707(), abs1000(), abs1414(), abs2000(), abs2828(), abs4000(), abs5657(), abs8000())
     names(infant.df) = c("abs250", "abs354", "abs500", "abs707", "abs1000", "abs1414", "abs2000", "abs2828", "abs4000", "abs5657", "abs8000")
@@ -448,7 +448,7 @@ server <- function(input, output, session) {
            "Newborn" = newborn.vars(),
            "6-9 months" = sixmth.vars(),
            "10-16 months" = twelvemth.vars(),
-           "5-23 months" = infant.vars()
+           "6-23 months" = infant.vars()
     )
   })
   # select either 1 or 1/2 octave frequencies for manual
@@ -457,7 +457,7 @@ server <- function(input, output, session) {
            "Newborn" = one.freq,
            "6-9 months" = two.freq,
            "10-16 months" = two.freq,
-           "5-23 months" = two.freq)
+           "6-23 months" = two.freq)
   })
   
   # clear the data when user changes selection (manual)
@@ -513,7 +513,7 @@ server <- function(input, output, session) {
                        "Newborn" = manual.data[,1:6],
                        "6-9 months" = manual.data,
                        "10-16 months" = manual.data, 
-                       '5-23 months' = manual.data)
+                       '6-23 months' = manual.data)
     plot.data =  gather(plot.data, absorbance)
     #str(plot.data)
     req(manual.freqs)
@@ -533,7 +533,7 @@ server <- function(input, output, session) {
                     "Newborn" = neonate.90.range.octave,
                     "6-9 months" = sixmth.90.range.half.octave,
                     "10-16 months" = twelvemth.90.range.2, 
-                    '5-23 months' = SixTo18mth.90.range.2)
+                    '6-23 months' = SixTo18mth.90.range.2)
     
     ggplot(plot.data) +
       scale_x_log10(expand=c(0, 0), breaks=c(250, 500, 1000, 2000, 4000, 8000))  +
@@ -782,14 +782,14 @@ server <- function(input, output, session) {
                    "Newborn" = newborn.pred.r,
                    "6-9 months" = sixmth.pred.r, 
                    "10-16 months" = twelvemth.prob.r,
-                   '5-23 months' = infant.pred.r)
+                   '6-23 months' = infant.pred.r)
     
     # and the correct 90% range (titan)
     range <- switch(input$age, 
                     "Newborn" = newborn.90.range,
                     "6-9 months" = sixmth.90.range, 
                     "10-16 months" = twelvemth.90.range,
-                    '5-23 months' = SixTo18mth.90.range) 
+                    '6-23 months' = SixTo18mth.90.range) 
     
     # get data for plotting (titan)
     req(right.data)
@@ -1006,7 +1006,7 @@ server <- function(input, output, session) {
     twelvemth.pred.l.complex.mild = twelvemth.pred.l.complex[1]
     twelvemth.pred.l.complex.severe = twelvemth.pred.l.complex[2]
     
-    # 5-23 mths (titan)
+    # 6-23 mths (titan)
     req(left.data)
     abs.l = left.data[1,]
     names(abs.l) = abs.freqs
@@ -1031,14 +1031,14 @@ server <- function(input, output, session) {
                    "Newborn" = newborn.pred.l,
                    "6-9 months" = sixmth.pred.l,
                    "10-16 months" = twelvemth.prob.l,
-                   '5-23 months' = infant.pred.l)
+                   '6-23 months' = infant.pred.l)
     
     # and the correct 90% range (titan)
     range <- switch(input$age, 
                     "Newborn" = newborn.90.range,
                     "6-9 months" = sixmth.90.range, 
                     "10-16 months" = twelvemth.90.range,
-                    '5-23 months' = SixTo18mth.90.range) 
+                    '6-23 months' = SixTo18mth.90.range) 
     
     # get data for plotting (titan)
     data.l <- left.data[1,]
