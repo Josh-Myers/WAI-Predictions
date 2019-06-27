@@ -118,7 +118,7 @@ ui <- fluidPage(
     tabPanel("About", fluid = TRUE,
              h4("About the App"),
              p("This web app implements the wideband acoustic immittance (WAI) statistical models for diagnosing middle ear pathology developed by 
-               Myers et al. (2018a, 2018b, 2019a, 2019b).
+               Myers et al. (2018a,b, in press-a,b).
                The models convert a multivariate ambient WAI measurement (226 to 8000 Hz) into a single interpretable value, in the form of a probability 
                between 0 and 1. 
                If probability is 0, there is no chance of middle ear pathology, and if 1, pathology is certain.
@@ -155,12 +155,12 @@ ui <- fluidPage(
              p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2018b). 
                Diagnosing middle ear pathology in 6- to 9-month-old infants using wideband absorbance: A risk prediction model. 
                Journal of Speech Language and Hearing Research, 61(9), 2386-2404."),
-             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019a). 
+             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (in press-a). 
                Diagnosing middle ear dysfunction in 10- to 16-month-old infants using wideband absorbance: An ordinal prediction model. 
-               Manuscript submitted for publication."),
-             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (2019b). 
+               Journal of Speech Language and Hearing Research."),
+             p("Myers, J., Kei, J., Aithal, S., Aithal, V., Driscoll, C., Khan, A., Manuel, A., Joseph, A., Malicka, A. N. (in press-b). 
                Diagnosing conductive dysfunction in infants using wideband acoustic immittance: Validation and development of predictive models. 
-               Manuscript submitted for publication."),
+               Journal of Speech Language and Hearing Research."),
              br()
              ),
     tabPanel("How to Use", fluid = TRUE,
